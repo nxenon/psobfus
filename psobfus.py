@@ -7,7 +7,7 @@ class Obfuscator:
     '''
     def __init__(self ,file):
         self.file = file
-        self.payload = '[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("{}"))'
+        self.payload = '([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("{}")))'
 
     def check_file(self):
         file_extension = self.file.split('.')[-1]
@@ -28,13 +28,11 @@ class Obfuscator:
         base64_msg = base64_bytes.decode('UTF8')
 
         injected_payload = self.payload.format(base64_msg)
-        variable_name = '$newvar'
-        payload_var = variable_name + ' = ' + injected_payload
-        final_content = payload_var + '\n' + 'iex ' + variable_name
+        final_payload = 'iex ' + injected_payload
 
         new_file_name = self.file.split('.')[0] + '_obfuscated.ps1'
         with open(new_file_name ,'w') as new_file :
-            new_file.write(final_content)
+            new_file.write(final_payload)
 
         print('Powershell code obfuscated successfully.')
         print('Obfuscated file --> ' + new_file_name)
